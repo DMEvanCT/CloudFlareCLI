@@ -27,6 +27,8 @@ func CreateDNS(dnstype, name,  ipaddres, ttl, zn string) {
 	jsondata["name"] = name
 	jsondata["content"] = ipaddres
 	jsondata["ttl"] = ttl
+	jsondata["priority"] = "10"
+	jsondata["proxied"] = "false"
 
 	data, _ := json.Marshal(jsondata)
 
@@ -51,10 +53,11 @@ func CreateDNS(dnstype, name,  ipaddres, ttl, zn string) {
 
 	switch zn {
 
-	case zone1:
+	case "zone1":
 		log.Println(zone1)
 		dnsurl := "https://api.cloudflare.com/client/v4/zones/" + zone1 + "/dns_records"
 		log.Println(dnsurl)
+		log.Println("I got here")
 		req, err := http.NewRequest("POST", dnsurl, bytes.NewBuffer(data))
 
 		req.Header.Set("Content-Type", "application/json")
@@ -73,17 +76,19 @@ func CreateDNS(dnstype, name,  ipaddres, ttl, zn string) {
 		if err != nil {
 			panic(err)
 		}
+		log.Println("I got here....")
 
 		defer resp.Body.Close()
+
 		if resp.Status == "200 OK" {
 			log.Println("We sent the slack message!")
 		} else {
+			fmt.Print(&resp.Body)
 			fmt.Println(resp.Status)
-			fmt.Println("There seems to be an issue. Check the logs api pods!")
+			fmt.Println("There seems to be an issue. Check the logs.")
 		}
-		log.Println(resp.Body)
 
-	case zone2:
+	case "zone2":
 		dnsurl := "https://api.cloudflare.com/client/v4/zones/" + zone2 + "/dns_records"
 		req, err := http.NewRequest("POST", dnsurl, bytes.NewBuffer(data))
 		req.Header.Set("Content-Type", "application/json")
@@ -112,7 +117,7 @@ func CreateDNS(dnstype, name,  ipaddres, ttl, zn string) {
 		}
 		log.Println(resp.Body)
 
-	case zone3:
+	case "zone3":
 		dnsurl := "https://api.cloudflare.com/client/v4/zones/" + zone3 + "/dns_records"
 		req, err := http.NewRequest("POST", dnsurl, bytes.NewBuffer(data))
 		req.Header.Set("Content-Type", "application/json")
@@ -137,11 +142,11 @@ func CreateDNS(dnstype, name,  ipaddres, ttl, zn string) {
 			log.Println("We sent the slack message!")
 		} else {
 			fmt.Println(resp.Status)
-			fmt.Println("There seems to be an issue. Check the logs api pods!")
+			fmt.Println("There seems to be an issue. Check the logs")
 		}
 		log.Println(resp.Body)
 
-	case zone4:
+	case "zone4":
 		dnsurl := "https://api.cloudflare.com/client/v4/zones/" + zone4 + "/dns_records"
 		req, err := http.NewRequest("POST", dnsurl, bytes.NewBuffer(data))
 		req.Header.Set("Content-Type", "application/json")
@@ -166,7 +171,7 @@ func CreateDNS(dnstype, name,  ipaddres, ttl, zn string) {
 			log.Println("We sent the slack message!")
 		} else {
 			fmt.Println(resp.Status)
-			fmt.Println("There seems to be an issue. Check the logs api pods!")
+			fmt.Println("There seems to be an issue. Check logs!")
 		}
 		log.Println(resp.Body)
 
