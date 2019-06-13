@@ -2,15 +2,29 @@ package CreateDNSCloudflare
 
 import (
 	"bytes"
-	"crypto/tls"
 	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 )
 
+
+type DNSCreate struct {
+	Types string `json:"type"  bson:"type"`
+	Name string `json:"name"  bson:"name"`
+	Content string `json:"content"  bson:"content"`
+	Ttl int `json:"ttl"  bson:"ttl"`
+	Proxied bool `json:"proxied"  bson:"proxied"`
+	Priority int `json:"priority"  bson:"priority"`
+
+}
+
 func CreateDNSRequest(zone, AuthEmail, AuthToken string, dns *DNSCreate) {
-	data, _ := json.Marshal(dns)
-	log.Println(zone)
+	data, _ := json.Marshal(&dns)
+	//data, _ := json.Marshal(DNSCreate{Type: dns.Type, name: dns.name, content: dns.content, ttl: dns.ttl, proxied: dns.proxied, priority: dns.priority})
+	fmt.Println("The Data!!!!")
+	fmt.Println(string(data))
 	dnsurl := "https://api.cloudflare.com/client/v4/zones/" + zone + "/dns_records"
 	log.Println(dnsurl)
 	log.Println("I got here")
@@ -22,25 +36,31 @@ func CreateDNSRequest(zone, AuthEmail, AuthToken string, dns *DNSCreate) {
 	}
 	req.Header.Set("X-Auth-Email", AuthEmail)
 	req.Header.Set("X-Auth-Key", AuthToken)
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
-	}
+
 
 	// sets up the client and executes post
-	client := &http.Client{Transport: tr}
+	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
 	}
-	log.Println("I got here....")
 
 	defer resp.Body.Close()
 
 	if resp.Status == "200 OK" {
-		log.Println("DNS name " + dns.name + " DNS type " + dns.dnstype + " DNS IP " + dns.content )
+		log.Println("DNS name " + dns.Name + " DNS type " )
 	} else {
 		log.Println(resp.Status)
 		log.Println("There seems to be an issue with the request")
+
+
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+		bodyString := string(bodyBytes)
+		log.Println(bodyString)
+
 
 	}
 }

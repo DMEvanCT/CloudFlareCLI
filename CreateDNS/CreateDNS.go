@@ -5,15 +5,7 @@ import (
 	"log"
 )
 
-type DNSCreate struct {
-	dnstype string `json:"type"  bson:"type"`
-	name string `json:"name"  bson:"name"`
-	content string `json:"content"  bson:"content"`
-	ttl int `json:"ttl"  bson:"ttl"`
-	proxied bool `json:"proxied"  bson:"proxied"`
-	priority int `json:"priority"  bson:"priority"`
 
-}
 
 
 
@@ -48,17 +40,24 @@ func CreateDNS(dnstype, name,  ipaddres, zones string, ttl int) {
 	switch zones {
 
 	case "zone1":
-		request := DNSCreate{
-			dnstype,
-			name,
-			ipaddres,
-			ttl,
-			false,
-			10,
+		request := &DNSCreate{
+			Types: dnstype,
+			Name: name,
+			Content: ipaddres,
+			Ttl: ttl,
+			Proxied: false,
+			Priority: 10,
+
 
 		}
 
-		CreateDNSRequest(zone1, AuthEmail, AuthToken, &request)
+
+
+		CreateDNSRequest(zone1, AuthEmail, AuthToken, request)
+
+
+
+
 
 
 
@@ -72,6 +71,7 @@ func CreateDNS(dnstype, name,  ipaddres, zones string, ttl int) {
 			10,
 
 		}
+
 		CreateDNSRequest(zone2, AuthEmail, AuthToken, &request)
 
 
