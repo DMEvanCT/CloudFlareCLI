@@ -9,7 +9,7 @@ import (
 var dnstype string
 var name string
 var ip string
-var ttl string
+var ttl int
 var zone string
 
 
@@ -30,7 +30,7 @@ var AddDNS = &cobra.Command{
 	Long: "This reaches out to the cloudlare api to create a dns record",
 
 	Run: func(cmd *cobra.Command, args []string) {
-		CreateDNSCloudflare.CreateDNS(dnstype, name, ip, ttl, zone)
+		CreateDNSCloudflare.CreateDNS(dnstype, name, ip, zone , ttl)
 
 	},
 }
@@ -40,13 +40,12 @@ var AddDNS = &cobra.Command{
 
 
 
-
 func CloudFlareFlags() {
-	AddDNS.PersistentFlags().StringVar(&dnstype, "t", "", "DNS type Ex: A record")
-	AddDNS.PersistentFlags().StringVar(&name, "n", "", "DNS type Ex: dark.darkmatterit.io")
-	AddDNS.PersistentFlags().StringVar(&ip, "i", "", "IP address type Ex: 8.8.8.8")
-	AddDNS.PersistentFlags().StringVar(&ttl, "s", "", "ttl between 120 and 2,147,483,647")
-	AddDNS.PersistentFlags().StringVar(&zone, "z", "zone1", "zone1 zone2 zone3 zone4")
+	AddDNS.PersistentFlags().StringVarP(&dnstype, "dnstype",  "t", "", "DNS type EX: A, CNAME, TXT")
+	AddDNS.PersistentFlags().StringVarP(&name, "name", "n", "","DNS name Ex: dark.darkmatterit.io")
+	AddDNS.PersistentFlags().StringVarP(&ip, "ip", "i", "", "IP address type Ex: 8.8.8.8")
+	AddDNS.PersistentFlags().StringVarP(&zone, "zone", "z", "", "zone1 zone2 zone3 zone4")
+	AddDNS.PersistentFlags().IntVarP(&ttl, "ttl", "s", 120, "Time to live in seconds above 120")
 
 
 	BaseCMD.AddCommand(AddDNS)
